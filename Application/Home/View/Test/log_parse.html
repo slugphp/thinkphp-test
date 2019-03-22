@@ -1,0 +1,124 @@
+
+<table id="{{$thisId}}dg"style="width: 30%;height:95%;" > </table>
+<div id="{{$thisId}}tb" style="padding:5px;height:auto">
+    <form id="{{$thisId}}fm">
+        筛选:
+        <select class="easyui-combobox" name="day" panelHeight="auto" style="width:100px">
+            <option value="7" selected="selected"> 7天 </option>
+            <option value="30"> 30天 </option>
+            <option value="60"> 60天 </option>
+            <option value="100"> 100天 </option>
+            <option value="365"> 一年 </option>
+        </select>
+        <a href="javascript:void(0);" class="easyui-linkbutton searchBtn" iconCls="icon-search" onclick="{{$thisId}}.search()">查询</a>
+    </form>
+</div>
+
+<table id="{{$thisId}}2dg"  style="width: 40%;height:95%;" > </table>
+<div id="{{$thisId}}2tb" style="padding:5px;height:auto">
+    <form id="{{$thisId}}2fm">
+        筛选:
+        <select class="easyui-combobox" name="day" panelHeight="auto" style="width:100px">
+            <option value="7" selected="selected"> 7天 </option>
+            <option value="30"> 30天 </option>
+            <option value="60"> 60天 </option>
+            <option value="100"> 100天 </option>
+            <option value="365"> 一年 </option>
+        </select>
+        <a href="javascript:void(0);" class="easyui-linkbutton searchBtn" iconCls="icon-search" onclick="{{$thisId}}2.search()">查询</a>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+    // 样式统一配置
+    var tbOpt = {
+        pagination: false,
+        css: [{
+                node: '.datagrid',
+                info: {
+                    'float': 'left',
+                    'margin-left': '20px',
+                    'margin-top': '20px',
+                },
+        }],
+    };
+    // 表1
+    var {{$thisId}} = new TbFmDlgsObj('{{$thisId}}').setTable($.extend({}, tbOpt, {
+        url: 'log/maxNumDomain',
+        title: "最受关注的业务排行",
+        remoteSort:false,
+        loadFilter: function (data) {
+            return common.mergeData(data, 'domain');
+        },
+        columns:[[
+            {field: 'num', title: '命中次数', width: '30%', align: 'center'},
+            {field: 'domain', title: '业务', width: '40%', align: 'center', styler: function (value,row,index) {
+                if (row.merge > 1) {
+                    var ca = Math.ceil(Math.random() * 76 + 180);
+                    var cb = Math.ceil(Math.random() * 76 + 180);
+                    var cc = Math.ceil(Math.random() * 76 + 180);
+                    return 'background-color:rgb('+ca+', '+cb+', 0);color:red;';
+                } else {
+                    return 'color:red;';
+                }
+            }} ,
+            {field: 'time', title: '时间', width: '32%', align: 'center'},
+        ]],
+        onLoadSuccess: function (data) {
+            for(var i = 0; i< data.merges.length; i++){
+                var m = data.merges[i];
+                $(this).datagrid('mergeCells',{
+                    field: 'domain',
+                    index: m.index,
+                    rowspan: m.rowspan
+                });
+            }
+        },
+        // 不选
+        onClickRow: function () {
+            return false;
+        },
+    }));
+    // 表2
+    var {{$thisId}}2 = new TbFmDlgsObj('{{$thisId}}2').setTable($.extend({}, tbOpt, {
+        url: 'log/maxNumIp',
+        title: "攻击频率最多的几个IP",
+        remoteSort: false,
+        singleSelect: true,
+        pageSize: {{$pageSize}},
+        loadFilter: function (data) {
+            return common.mergeData(data, 'ip');
+        },
+        columns:[[
+            { field: 'num', title: '命中次数', width: '17%', align: 'center'},
+            { field: 'time', title: '时间', width: '17%', align: 'center'} ,
+            { field: 'ip', title: 'IP', width: '22%', align: 'center', styler: function (value,row,index) {
+                if (row.merge > 1) {
+                    var ca = Math.ceil(Math.random() * 76 + 180);
+                    var cb = Math.ceil(Math.random() * 76 + 180);
+                    var cc = Math.ceil(Math.random() * 76 + 180);
+                    return 'background-color:rgb('+ca+', '+cb+', 0);color:red;';
+                } else {
+                    return 'color:red;';
+                }
+            }},
+            { field: 'remote_addr', title: 'remote_addr', width: '22%', align: 'center'},
+            { field: 'http_x_forward', title: 'http_x_forward', width: '22%', align: 'center'},
+        ]],
+        onLoadSuccess: function (data) {
+            for(var i = 0; i< data.merges.length; i++){
+                var m = data.merges[i];
+                $(this).datagrid('mergeCells',{
+                    field: 'ip',
+                    index: m.index,
+                    rowspan: m.rowspan
+                });
+            }
+        },
+        // 不选
+        onClickRow: function () {
+            return false;
+        },
+    }));
+</script>

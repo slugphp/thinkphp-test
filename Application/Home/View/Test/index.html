@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8" />
+    <title>凤凰日志审计系统</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{$staticPath}}/easyui/themes/{{$theme}}/easyui.css">
+    <link rel="stylesheet" type="text/css" href="{{$staticPath}}/easyui/themes/icon.css">
+</head>
+<body >
+<body class="easyui-layout" data-options="fit:true,scroll:'no'">
+    <!-- 主页页头 -->
+    <div data-options="region:'north',border:false" style="height: 74px; background: #2596ea; padding: 10px">
+        <img src="{{$staticPath}}/images/test.jpg" style="height:50px;" />
+        <span style="padding-left:5px; font-size: 28px; ">日志审计系统</span>
+    </div>
+    <!-- 主页菜单 -->
+    <div data-options="region:'west',split:false,title:'导航菜单'" style="width: 170px;">
+        <div class="easyui-accordion" data-options="fit: false, border: false, animate: true, multiple: false"></div>
+    </div>
+    <!-- 主页内容 -->
+    <div data-options="region:'center'">
+        <div id="tt" class="easyui-tabs" data-options="tools:'#tab-tools',fit:true,border:false" style="width: 100%; height: auto;">
+            <div title="首页" data-options="" style="padding: 100px;">
+                <h3>您好，{{$uid}}</h3>
+                <h3>OSSEC已运行再x台主机上，收集了{{$logNum}}条日志，总共涉及{{$tplNum}}个模板。</h3>
+            </div>
+        </div>
+    </div>
+    <!-- 主页页尾 -->
+    <div data-options="region:'south',border:false" style="height: 25px; text-align: center; line-height: 25px;">
+        <div class="footer">@{{$smarty.now|date_format:"%Y"}} 凤凰网/技术部/运维中心</div>
+    </div>
+    <script type="text/javascript" src="{{$staticPath}}/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="{{$staticPath}}/easyui/jquery.easyui.js"></script>
+    <script type="text/javascript" src="{{$staticPath}}/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="{{$staticPath}}/js/admin.js"></script>
+</body>
+</html>

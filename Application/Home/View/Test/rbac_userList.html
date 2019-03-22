@@ -1,0 +1,79 @@
+<style type="text/css">
+    .datagrid-view .datagrid-editable-input {
+        min-height: 140px;
+    }
+</style>
+
+    <table id="{{$thisId}}dg" style="width: 99%;height:100%;">
+        <thead>
+            <tr>
+                <th data-options="field:'user_id',width:'200',align:'center',sortable:true">id</th>
+                <th data-options="field:'sso_uid',width:'200',align:'center',styler:common.cellStylerRed">域id</th>
+                <th data-options="field:'role',width:'200',align:'center'">角色</th>
+                <th data-options="field:'add_time',width:'200',align:'center',editor:'textarea',sortable:true">添加时间</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="{{$thisId}}tb" style="padding:5px;height:auto">
+        <div>
+            <form id="{{$thisId}}fm">
+                筛选:
+                <select class="easyui-combobox" name="tplStatus" panelHeight="auto" style="width:100px">
+                    <!-- <option value="1"> 未处理 </option>
+                    <option value="2"> 信任 </option>
+                    <option value="3"> 备忘 </option>
+                    <option value="4"> 存在漏洞 </option> -->
+                    <option value="0" selected="selected"> 全部 </option>
+                </select>
+                <a href="javascript:void(0);" class="easyui-linkbutton searchBtn" iconCls="icon-search" onclick="{{$thisId}}.search()">查询</a>
+            </form>
+        </div>
+    </div>
+    <div id="{{$thisId}}dlg">
+        <form method="get" style="height:100%;width:95%;" onsubmit="return false;">
+            <input type="hidden" value="" name="template_id">
+            <table style="height:100%;width:auto;">
+                <thead>
+                    <tr>
+                        <th width="80"></th>
+                        <th width="300"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr><td align="center">模板：</td><td style="word-break: break-all;"></td></tr>
+                        <tr><td align="center">域名：</td><td></td></tr>
+                        <tr><td align="center">范围：</td><td>
+                            <input type="radio" value="1" name="scope" checked>仅本站
+                            <input type="radio" value="2" name="scope">所有站点
+                        </td></tr>
+                        <tr><td align="center">类别：</td><td>
+                            <input type="radio" value="1" name="status" checked>未处理
+                            <input type="radio" value="2" name="status">信任
+                            <input type="radio" value="3" name="status">备忘
+                            <input type="radio" value="4" name="status">存在漏洞
+                            </td></tr>
+                        <tr><td align="center">说明：</td><td>
+                            <input type="text" name="desc" style="width: 100%;">
+                        </td></tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+<script type="text/javascript">
+    // 表单
+    var {{$thisId}} = new TbFmDlgsObj('{{$thisId}}').setTable({
+        url: 'rbac/userListData',
+        pageSize: {{$pageSize}},
+        loadFilter: function(data){
+            data.rows.map(function(item, index) {
+                if (item.role_id == 1) {
+                    item.role = '管理员';
+                }
+                item.add_time = common.date('Y-m-d H:i:s', item.add_time);
+                return item;
+            })
+            return data;
+        },
+        onClickRow: function () {}
+    });
+</script>

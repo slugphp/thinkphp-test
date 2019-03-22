@@ -1,0 +1,6 @@
+<?php
+    echo getcwd();
+    $menu = file_get_contents('./Main.sublime-menu');
+    $menu = json_decode($menu, true);
+    dump($menu);
+?> 

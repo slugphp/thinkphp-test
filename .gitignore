@@ -1,0 +1,7 @@
+﻿
+# 复制 config.default.php > config.php , 更改配置
+/Application/Common/Conf/config.php
+# 缓存日志，需要有写权限
+/Application/Runtime/
+# Public
+/Public/log/

@@ -1,0 +1,172 @@
+<style type="text/css">
+    .datagrid-view .datagrid-editable-input {
+        min-height: 140px;
+    }
+</style>
+
+    <table id="{{$thisId}}dg" style="width: 99%;height:100%;"> </table>
+    <div id="{{$thisId}}tb" style="padding:5px;height:auto">
+        <div style="margin-top:8px;">
+            <form id="{{$thisId}}fm">
+                &nbsp;
+                <a href="javascript:void(0);" class="easyui-linkbutton searchBtn" iconCls="icon-add" onclick="{{$thisId}}.openDialog('dlg', [0], event)">添加</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                筛选:
+                <input class="easyui-textbox" type="text" name="like">
+                <a href="javascript:void(0);" class="easyui-linkbutton searchBtn" iconCls="icon-search" onclick="{{$thisId}}.search()">查询</a>
+            </form>
+        </div>
+    </div>
+    <div id="{{$thisId}}dlg">
+        <form method="get" style="height:100%;width:95%;" onsubmit="return false;">
+            <input type="hidden" value="" name="loophole_id">
+            <table style="height:100%;width:auto;margin-left:8px;">
+                    <tr>
+                        <th width="80"></th>
+                        <th width="300"></th>
+                    </tr>
+                    <tr>
+                        <td align="right">漏洞名称：</td>
+                        <td><input type="text" class="easyui-textbox" name="name" style="width: 100%;" data-options="required:true"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">漏洞域名：</td>
+                        <td><input type="text" class="easyui-textbox" name="domain" style="width: 100%;"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">影响IP：</td>
+                        <td><input type="text" class="easyui-textbox" name="ip" style="width: 100%;"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">相关部门：</td>
+                        <td><input type="text" class="easyui-textbox" name="department" style="width: 100%;"></td>
+                    </tr>
+                    <tr style="height:40%;">
+                        <td align="right">漏洞描述：</td>
+                        <td><textarea class="easyui-textbox" name="desc" style="width: 100%;height:70%;"></textarea></td>
+                    </tr>
+            </table>
+        </form>
+    </div>
+    <div id="{{$thisId}}dlg2">
+        <form method="get" style="height:100%;width:95%;" onsubmit="return false;">
+            <input type="hidden" value="" name="loophole_id">
+            <table style="height:100%;width:auto;margin-left:8px;">
+                    <tr>
+                        <th width="60px"></th>
+                        <th width="180px"></th>
+                    </tr>
+                    <tr>
+                        <td align="right">姓名：</td>
+                        <td><input type="text" class="easyui-textbox" name="handle_user_name" style="width: 100%;" data-options="required:true"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">邮箱：</td>
+                        <td><input type="text" class="easyui-textbox" name="handle_user_email" style="width: 100%;" data-options="required:true,validType:'email',invalidMessage:'域账号@ttt.com，若为其他邮箱可通知，但无法登陆处理。'"></td>
+                    </tr>
+            </table>
+        </form>
+    </div>
+<script type="text/javascript">
+    // 表单
+    var {{$thisId}} = (function(){
+        // 初始配置id
+        var idStr = '{{$thisId}}';
+        var tableOpt = {
+            url: 'loophole/listData',
+            pageSize: {{$pageSize}},
+            columns:[[
+                {field: 'loophole_id', title: '漏洞id', width: '5%', align:'center'},
+                {field: 'name', title: '名称', width: '15%', align:'center'},
+                {field: 'domain', title: '域名', width: '15%', align:'center'},
+                {field: 'ip', title: 'ip', width: '10%', align:'center'},
+                {field: 'department', title: '部门', width: '10%', align:'center'},
+                {field: 'desc', title: '漏洞描述', width: '15%', height: '222px', align:'center',editor:'textarea',formatter: function(value,row,index){
+                        if (value.length > 18) {
+                            return value.substring(0, 18) + '...';
+                        }
+                }},
+                {field: 'add_time', title: '添加时间', width: '10%', align:'center'},
+                {field: 'mission', title: '分配任务', width: '10%', align:'center'},
+                {field: 'action', title: '操作', width: '10%', align:'center'},
+            ]],
+            loadFilter: function(data){
+                var thisId = eval(idStr),
+                    like = thisId.form.find(":input[name='like']").val();
+                data.rows.map(function(item, index) {
+                    item.add_time = common.date('Y-m-d H:i:s', item.add_time);
+                    var id = item.loophole_id;
+                    if (like != '') {
+                        item['loophole_id'] = common.redStr(like, item['loophole_id']);
+                        item['name'] = common.redStr(like, item['name']);
+                        item['domain'] = common.redStr(like, item['domain']);
+                        item['ip'] = common.redStr(like, item['ip']);
+                        item['department'] = common.redStr(like, item['department']);
+                        item['desc'] = common.redStr(like, item['desc']);
+                    }
+                    item.mission = '<a href="javascript:void(0);" onclick="'+idStr+'.openDialog(\'dlg2\',['+ id + '], event)">修复</a>';
+                        // + ' | <a href="javascript:void(0);" onclick="'+idStr+'.confirm('+ "'loophole/saveData?status=0&loophole_id=" + id + "'"+ ');">扫描</a>';
+                    item.action = '<a href="javascript:void(0);" onclick="'+idStr+'.openDialog(\'dlg\', ['
+                        + id
+                        + '], event)">编辑</a> | <a href="javascript:void(0);" onclick="'+idStr+'.confirm('
+                        + "'loophole/saveData?status=-1&loophole_id=" + id + "'"
+                        + ');">删除</a>';
+                    return item;
+                })
+                return data;
+            },
+        }
+        var dlgName1 = 'dlg';
+        var dlgOpt1 = {
+            dlgName: dlgName1,
+            width: 500,
+            height: 400,
+            saveUrl: 'loophole/saveData',
+            openDialogFunc: function () {
+                var [loophole_id, event] = arguments,
+                    dlgDom = this.dialog[dlgName1];
+                // 加载表单
+                if (loophole_id == 0) {
+                    dlgDom.find('form').form('clear');
+                    var opt = {title: '新增漏洞', iconCls: 'icon-add'};
+                } else {
+                    // 获取数据
+                    var rows = this.table.datagrid('getRows'),
+                        row;
+                    rows.map(function(item) {
+                        if (item.loophole_id == loophole_id) {
+                            row = item;
+                        }
+                    });
+                    // 填充表单
+                    var rowClean = {};
+                    for (var item in row) {
+                        rowClean[item] = common.rmRedStr(row[item]);
+                    }
+                    dlgDom.find('form').form('load', rowClean);
+                    // 标题
+                    var opt = {title: '修改漏洞', iconCls: 'icon-save'};
+                }
+                dlgDom.dialog(opt).dialog('open');
+                event.stopPropagation();
+            },
+        }
+        var dlgName2 = 'dlg2';
+        var dlgOpt2 = {
+            dlgName: dlgName2,
+            width: 300,
+            height: 200,
+            saveUrl: 'loophole/allot',
+            openDialogFunc: function () {
+                var [loophole_id, event] = arguments,
+                    dlgDom = this.dialog[dlgName2];
+                // dialog表单
+                dlgDom.find('form').form('clear').form('load', {loophole_id: loophole_id});
+                // dialog配置
+                dlgDom.dialog({title: '将漏洞分配给：', iconCls: 'icon-save'}).dialog('open');
+                event.stopPropagation();
+            },
+        }
+        return new TbFmDlgsObj(idStr).setTable(tableOpt).setDialog(dlgOpt1).setDialog(dlgOpt2);
+    }());
+</script>
